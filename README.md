@@ -1,0 +1,2 @@
+# HikVisionNetLibrary
+海康威视的SDK封装真糟糕，这里自己提供下封装的类库
