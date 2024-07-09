@@ -10672,7 +10672,35 @@ namespace HkNetLib.Hardware
             VEHICLE_LEAVE,   //车辆离开虚拟线圈 
             UEUE_VARY        //队列变化             
         }
+        /*************************************************
+        参数配置结构、参数(其中_V30为9000新增)
+        **************************************************/
 
+        public const int NET_DVR_SET_FOCUSMODECFG = 3306;
+        public const int NET_DVR_GET_FOCUSMODECFG = 3305;
+
+        [StructLayoutAttribute(LayoutKind.Sequential)]
+        public struct NET_DVR_FOCUSMODE_CFG
+        {
+            public uint dwSize;
+            public byte byFocusMode;
+            public byte byAutoFocusMode;
+            public ushort wMinFocusDistance;
+            public byte byZoomSpeedLevel;
+            public byte byFocusSpeedLevel;
+            public byte byOpticalZoom;
+            public byte byDigtitalZoom;
+            public float fOpticalZoomLevel;
+            public uint dwFocusPos;
+            public byte byFocusDefinitionDisplay;
+            public byte byFocusSensitivity;
+            [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = 2, ArraySubType = UnmanagedType.I1)]
+            public byte[] byRes1;
+            public uint dwRelativeFocusPos;
+            [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = 48, ArraySubType = UnmanagedType.I1)]
+            public byte[] byRes;
+
+        }
         [StructLayoutAttribute(LayoutKind.Sequential)]
         public struct NET_DVR_LANE_PARAM
         {

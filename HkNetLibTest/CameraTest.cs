@@ -39,10 +39,10 @@ namespace HkNetLibTest
             Assert.IsNotNull(camera);
             var result = camera.Login(new CameraLoginInfo()
             {
-                IP = "192.168.4.172",
+                IP = "192.168.21.84",
                 Port = 8000,
                 UserName = "admin",
-                Password = "1234qwer",
+                Password = "hik12345",
             });
             Assert.IsTrue(result);
             //iDS-2ZMN2507N20230531AARRAB9360262
@@ -110,22 +110,21 @@ namespace HkNetLibTest
             Assert.IsNotNull(camera);
             var result = camera.Login(new CameraLoginInfo()
             {
-                IP = "192.168.4.19",
+                IP = "192.168.21.84",
                 Port = 8000,
                 UserName = "admin",
-                Password = "Ancn1111",
-                ChannelNo = 8
+                Password = "hik12345",
             });
             Assert.IsTrue(result);
             for (int i = 0; i < 1000; i++)
             {
+                Thread.Sleep(2000);
                 result = camera.Login(new CameraLoginInfo()
                 {
-                    IP = "192.168.4.19",
+                    IP = "192.168.21.84",
                     Port = 8000,
                     UserName = "admin",
-                    Password = "Ancn1111",
-                    ChannelNo = 8
+                    Password = "hik12345",
                 });
                 var bOnline = camera.IsOnline();
                 Assert.IsTrue(bOnline);
@@ -169,7 +168,29 @@ namespace HkNetLibTest
             Assert.IsTrue(rtn);
         }
 
+        [TestMethod]
+        public void TestCameraFocus()
+        {
+            var camera = new HkCamera();
 
+            Assert.IsNotNull(camera);
+            var result = camera.Login(new CameraLoginInfo()
+            {
+                IP = "192.168.21.84",
+                Port = 8000,
+                UserName = "admin",
+                Password = "hik12345",
+            });
+            Assert.IsTrue(result);
+            //iDS-2ZMN2507N20230531AARRAB9360262
+            var sn = camera.GetSerialNumber();
+            Assert.IsNotNull(sn);
+
+            var type = camera.GetFocusMode();
+            var b = camera.SetFocusMode(FocusModeType.Manual);
+
+             type = camera.GetFocusMode();
+       }
 
     }
 }

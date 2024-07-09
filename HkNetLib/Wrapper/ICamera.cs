@@ -32,7 +32,9 @@ namespace HkNetLib.Wrapper
         /// 登出
         /// </summary>
         void Logout();
-       
+
+        bool SetFocusMode(FocusModeType focusModeType);
+        FocusModeType GetFocusMode();
         /// <summary>
         /// 控制云台开始
         /// </summary>

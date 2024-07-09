@@ -190,6 +190,101 @@ namespace HkNetLib.Wrapper
             }
         }
 
+
+        public  bool SetFocusMode(FocusModeType focusModeType)
+        {            
+                bool res = false;
+                var destMode = focusModeType;
+                CHCNetSDK.NET_DVR_FOCUSMODE_CFG focusmode_cfg = new CHCNetSDK.NET_DVR_FOCUSMODE_CFG();
+                focusmode_cfg.byRes = new byte[48];
+                focusmode_cfg.byRes1 = new byte[2];
+                int nSize = Marshal.SizeOf(focusmode_cfg);
+                focusmode_cfg.dwSize = (uint)nSize;
+                IntPtr ptrDeviceCfg = Marshal.AllocHGlobal(nSize);
+
+                try
+                {
+                    // 获取当前模式
+                    Marshal.StructureToPtr(focusmode_cfg, ptrDeviceCfg, false);
+                    uint rSize = (uint)nSize;
+                    if (!CHCNetSDK.NET_DVR_GetDVRConfig(_userId, CHCNetSDK.NET_DVR_GET_FOCUSMODECFG, 1, ptrDeviceCfg, (uint)nSize, ref rSize))
+                    {
+                        var errorStr = CHCNetSDK.NET_DVR_GetLastError();
+                        return res;
+                    }
+
+                    // 如果当前模式与请求模式相同，则直接返回true
+                    CHCNetSDK.NET_DVR_FOCUSMODE_CFG getObj = (CHCNetSDK.NET_DVR_FOCUSMODE_CFG)Marshal.PtrToStructure(ptrDeviceCfg, typeof(CHCNetSDK.NET_DVR_FOCUSMODE_CFG));
+                    var curMode = (FocusModeType)getObj.byFocusMode;
+                    if (curMode == destMode)
+                    {
+                        res = true;
+                        return res;
+                    }
+
+                    // 否则调用设置方法
+                    getObj.fOpticalZoomLevel = 0;
+                    getObj.byOpticalZoom = 32;
+                    getObj.byFocusMode = (byte)destMode;
+                    IntPtr ptrDeviceCfg1 = Marshal.AllocHGlobal((int)getObj.dwSize);
+                    Marshal.StructureToPtr(getObj, ptrDeviceCfg1, false);
+                    res = CHCNetSDK.NET_DVR_SetDVRConfig(_userId, CHCNetSDK.NET_DVR_SET_FOCUSMODECFG, 1, ptrDeviceCfg1, focusmode_cfg.dwSize);
+                    if (!res)
+                    {
+                        var errorStr = CHCNetSDK.NET_DVR_GetLastError();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(ptrDeviceCfg);
+                }
+
+                return res;           
+        }
+
+        /// <summary>
+        /// 获取对焦距模式
+        /// </summary>
+        /// <returns></returns>
+        public FocusModeType GetFocusMode()
+        {
+            FocusModeType retValue = FocusModeType.None;
+
+            CHCNetSDK.NET_DVR_FOCUSMODE_CFG focusmode_cfg = new CHCNetSDK.NET_DVR_FOCUSMODE_CFG
+            {
+                byRes = new byte[48],
+                byRes1 = new byte[2]
+            };
+            int nSize = Marshal.SizeOf(focusmode_cfg);
+            focusmode_cfg.dwSize = (uint)nSize;
+            IntPtr ptrDeviceCfg = Marshal.AllocHGlobal(nSize);
+
+            try
+            {
+                Marshal.StructureToPtr(focusmode_cfg, ptrDeviceCfg, false);
+                uint rSize = (uint)nSize;
+                if (CHCNetSDK.NET_DVR_GetDVRConfig(this._userId, CHCNetSDK.NET_DVR_GET_FOCUSMODECFG, 1, ptrDeviceCfg, (uint)nSize, ref rSize))
+                {
+                    CHCNetSDK.NET_DVR_FOCUSMODE_CFG getObj = (CHCNetSDK.NET_DVR_FOCUSMODE_CFG)Marshal.PtrToStructure(ptrDeviceCfg, typeof(CHCNetSDK.NET_DVR_FOCUSMODE_CFG));
+                    retValue = (FocusModeType)getObj.byFocusMode;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(ptrDeviceCfg);
+            }
+
+            return retValue;
+        }
+
         public bool Shutdown()
         {
             try
